@@ -1,0 +1,70 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Test remove elements
+      id: test-remove-elements
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test remove elements
+        setup-command: pip install pytest
+        command: pytest tp6_lists_test.py -k test_remove_elements
+        timeout: 10
+        max-score: 1
+    - name: Test add elements
+      id: test-add-elements
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test add elements
+        setup-command: pip install pytest
+        command: pytest tp6_lists_test.py -k test_add_elements
+        timeout: 10
+        max-score: 1
+    - name: Test is empty
+      id: test-is-empty
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test is empty
+        setup-command: pip install pytest
+        command: pytest tp6_lists_test.py -k test_is_empty
+        timeout: 10
+        max-score: 1
+    - name: Test check lists
+      id: test-check-lists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test check lists
+        setup-command: pip install pytest
+        command: pytest tp6_lists_test.py -k test_check_lists
+        timeout: 10
+        max-score: 1
+    - name: Test list of lists
+      id: test-list-of-lists
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Test list of lists
+        setup-command: pip install pytest
+        command: pytest tp6_lists_test.py -k test_list_of_lists
+        timeout: 10
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST-REMOVE-ELEMENTS_RESULTS: "${{steps.test-remove-elements.outputs.result}}"
+        TEST-ADD-ELEMENTS_RESULTS: "${{steps.test-add-elements.outputs.result}}"
+        TEST-IS-EMPTY_RESULTS: "${{steps.test-is-empty.outputs.result}}"
+        TEST-CHECK-LISTS_RESULTS: "${{steps.test-check-lists.outputs.result}}"
+        TEST-LIST-OF-LISTS_RESULTS: "${{steps.test-list-of-lists.outputs.result}}"
+      with:
+        runners: test-remove-elements,test-add-elements,test-is-empty,test-check-lists,test-list-of-lists
